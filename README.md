@@ -9,3 +9,4 @@ if the password entered by user matches with correct one, soleniod is unlocked a
 else if the password entered by user didn't match with correct one, selonoid is still locked and red led tuens on.
 In case of room cleaning, the solenoid is unlocked without asking for password and green led turns on.
 In case of checkout, the solenoid is locked whether you entered a correct password, wrong password, or didn't enter any thing.
+hjjkihhjki
