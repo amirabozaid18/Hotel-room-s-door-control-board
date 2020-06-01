@@ -17,7 +17,7 @@ int main(void)
 {
 	char c;
 	char myinput[5] = {'\0','\0','\0','\0','\0'}; //user input in case of checkin mode
-	solenoid_init();     //when solenoid is locked, red LED turns on, but when it's unlocked, green LED truns on
+	solenoid_init();     
 	keypad_init();
 	UART1_init();
 	
@@ -26,8 +26,8 @@ int main(void)
 		__disable_irq();
 		if (done)
 		{
-			if (operation[1] == '2') { GPIO_PORTF_DATA_R = (1<<3); }  //cleaning room
-			else if (operation[1] == '0' ) { GPIO_PORTF_DATA_R = (1<<1); }  //checkout
+			if (operation[1] == '2') { GPIO_PORTF_DATA_R = (1<<3);  GPIO_PORTD_DATA_R = (1<<0); }  //cleaning room
+			else if (operation[1] == '0' ) { GPIO_PORTF_DATA_R = (1<<1);  GPIO_PORTD_DATA_R = 0; }  //checkout
 			else if (operation[1] == '1' )   //checkin
 			{
 				GPIO_PORTA_DATA_R &= 0xF0;         // drive all rows to be low
@@ -35,8 +35,8 @@ int main(void)
 				{
 					c = getkey();
 					if (put_char(c,myinput))
-					{ if (!strcmp(myinput,password)) { GPIO_PORTF_DATA_R = (1<<3);}
-						else {  GPIO_PORTF_DATA_R = (1<<1); }
+					{ if (!strcmp(myinput,password)) { GPIO_PORTF_DATA_R = (1<<3);   GPIO_PORTD_DATA_R = (1<<0);}
+						else {  GPIO_PORTF_DATA_R = (1<<1); GPIO_PORTD_DATA_R = 0; }
 					}
 					while ( (GPIO_PORTA_DATA_R & 0xF0) != 0xF0);  // key is still not released
 				}
