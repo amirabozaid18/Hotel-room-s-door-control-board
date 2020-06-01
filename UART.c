@@ -24,12 +24,25 @@ void UART1_init(void)
 
 void UART1_Handler(void)
 {
+	static char terminated = 0;  // a flag to determine if the current mode is setup mode or not
 	static unsigned char i=0;
-	unsigned char j = 0;
+	unsigned char j = 0; 
+	unsigned char temp;
+	static unsigned char k = 0;
 	UART1_ICR_R = 0x10;
-	done = 0;
-	operation[i++] = UART1_DR_R;
-	if (UART1_DR_R == '\n')       // when PC sends \n , then this operation is done and we are ready to get new one
-	{i = 0;  done = 1; while(j<4) { password[j] = operation[j+2]; j++;}}
-		   
+	if (terminated)             // we have finished setup mode
+	{
+		done = 0;
+		operation[i++] = UART1_DR_R & 0x0FF;
+		if ((UART1_DR_R & 0x0FF) == '\n')       // when PC sends \n , then this operation is done and we are ready to get new one
+		{i = 0;  done = 1; while(j<4) { password[j] = operation[j+2]; j++;}}
+	}
+	else              // we are still in setup mode 
+	{
+			temp = UART1_DR_R & 0x0FF;
+			if (temp == 'T')   // a signal to terminate setup mode
+				terminated = 1;
+			else
+				rooms[k++] = UART1_DR_R & 0x0FF;
+	}
 }
