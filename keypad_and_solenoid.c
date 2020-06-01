@@ -48,7 +48,7 @@ int put_char(char c,char* myinput)  // returns 1 if all 4 digits are put , 0 oth
 	return 0;	
 }
 
-void solenoid_init(void)
+void solenoid_init(void)  // we have PD0 connected to selonoid and Red led turns on in case it's locked, Green led turns on in case it's unlocked
 {
 	SYSCTL_RCGCGPIO_R |= (1<<5);
 	while(!(SYSCTL_PRGPIO_R & (1<<5)));
@@ -57,4 +57,11 @@ void solenoid_init(void)
 	GPIO_PORTF_DEN_R = 0xFF;
 	GPIO_PORTF_AMSEL_R = 0;
 	GPIO_PORTF_DIR_R |= 0x0A;
+	SYSCTL_RCGCGPIO_R |= (1<<3);
+	while(!(SYSCTL_PRGPIO_R & (1<<3)));
+	GPIO_PORTD_CR_R =0x01;
+	GPIO_PORTD_AFSEL_R = 0;
+	GPIO_PORTD_DEN_R = 0xFF;
+	GPIO_PORTD_AMSEL_R = 0;
+	GPIO_PORTD_DIR_R |= 0x01;
 }
