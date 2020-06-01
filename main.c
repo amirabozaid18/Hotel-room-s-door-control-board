@@ -12,7 +12,7 @@ char getkey(void);
 char operation[7] = {'\0','\0','\0','\0','\0','\0','\0'};
 char password[5] = {'\0','\0','\0','\0','\0'};
 unsigned char done = 0; // a flag to determine if UART sent the whole operation or still sending it
-
+unsigned char rooms[20]; // used to store room numbers
 int main(void)
 {
 	char c;
@@ -21,14 +21,9 @@ int main(void)
 	keypad_init();
 	UART1_init();
 	
-	while(1)      //setup mode , it ends when the uset enters 'T' for "Terminate"
-	{
-		c = UART1_DR_R & 0x0FF;
-		if (c == 'T')  {break; }
-	}
-	__enable_irq();
 	while (1)    // 3 possible scenarios each time : checkin(1), cleaning room(2), or checkout(0)
-	{
+	{ 
+		__disable_irq();
 		if (done)
 		{
 			if (operation[1] == '2') { GPIO_PORTF_DATA_R = (1<<3); }  //cleaning room
@@ -47,5 +42,6 @@ int main(void)
 				}
 			}
 		}
+		__enable_irq();
 	}
 }
